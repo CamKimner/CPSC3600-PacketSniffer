@@ -14,7 +14,7 @@ class UDPHeader(LayerHeader):
         self.checksum = None
 
         # TODO: Unpack the header and assign the values to the above variables
-        self.source_port, self.dest_port, self.length, self.checksum = unpack('!HHHH', pkt)
+        self.source_port, self.dest_port, self.length, self.checksum = unpack('!HHHH', self.header_bytes)
 
     def protocol(self):
         return "UDP"
