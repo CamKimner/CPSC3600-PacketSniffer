@@ -17,6 +17,7 @@ class EthernetHeader(LayerHeader):
         self.ether_type = None
 
         # TODO: Unpack the header and assign the values to the above variables
+        self.dest_addr, self.source_addr, self.ether_type = unpack("!6s6sH", self.header_bytes)
 
     def protocol(self):
         return "Ethernet"

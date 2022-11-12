@@ -1,3 +1,5 @@
+#!/bin/env python3
+
 import threading
 
 from link_layer_headers.ethernet_header import EthernetHeader
