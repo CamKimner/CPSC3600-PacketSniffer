@@ -42,8 +42,8 @@ class IPv4Header(LayerHeader):
         # TODO: You do not need to unpack any options, if they are present in the header. However, if options 
         #       are present, store the bytes associated with them in self.options_bytes.
 
-        if(self.IHL > 0x5):
-            self.options_bytes = pkt[self.header_bytes:]
+        # if(self.IHL > 5):
+        #     self.options_bytes = pkt[self.header_bytes:]
 
     def protocol(self):
         return "IPv4"
