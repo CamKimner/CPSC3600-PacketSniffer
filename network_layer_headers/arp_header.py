@@ -23,6 +23,15 @@ class ARPHeader(LayerHeader):
         self.target_protocol_address = None
 
         # TODO: Unpack the header and assign the values to the above variables
+        self.hardware_type, self.protocol_type = unpack("!HH", self.header_bytes[:4])
+
+        self.hardware_address_len, self.protocol_address_len = unpack("!BB", self.header_bytes[4:6])
+
+        self.opcode, self.sender_hardware_address = unpack("!H6s", self.header_bytes[6:14])
+
+        self.sender_protocol_address, self.target_hardware_address = unpack("!I6s", self.header_bytes[14:22])
+
+        self.target_protocol_address = unpack("!I", self.header_bytes)[0]
 
     def protocol(self):
         return "ARP"
