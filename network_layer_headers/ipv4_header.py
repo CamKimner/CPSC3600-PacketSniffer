@@ -27,9 +27,23 @@ class IPv4Header(LayerHeader):
         self.options_bytes = None
 
         # TODO: Unpack the header and assign the values to the above variables
+        versIHL, self.TOS, self.total_length  = unpack("!BBH", self.header_bytes[:4])
+        self.version = versIHL >> 4
+        self.IHL = versIHL & 0x0F
+
+        self.identification, flagsFrag_off = unpack("!HH", self.header_bytes[4:8])
+        self.flags = flagsFrag_off >> 13
+        self.fragment_offset = flagsFrag_off & 0x1FFF
+
+        self.TTL, self.transport_protocol, self.checksum = unpack("!BBH", self.header_bytes[8:12])
+
+        self.source_addr, self.dest_addr  = unpack("!II", self.header_bytes[12:20]) 
 
         # TODO: You do not need to unpack any options, if they are present in the header. However, if options 
         #       are present, store the bytes associated with them in self.options_bytes.
+
+        if(self.IHL > 0x5):
+            self.options_bytes = pkt[self.header_bytes:]
 
     def protocol(self):
         return "IPv4"
