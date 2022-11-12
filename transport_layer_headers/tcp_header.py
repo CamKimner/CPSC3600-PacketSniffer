@@ -4,7 +4,7 @@ from struct import pack, unpack
 class TCPHeader(LayerHeader):
     def __init__(self, pkt):
         # TODO: Replace the value of header_length with the length of an Ethernet header
-        header_length = 0
+        header_length = 20
         
         # TODO: If this header can be variable length, you will need to update the contents of 
         #       self.header_bytes once you know the full length of the header in order to ensure
@@ -32,9 +32,31 @@ class TCPHeader(LayerHeader):
         self.options_bytes = None
 
         # TODO: Unpack the header and assign the values to the above variables
+        self.source_port, self.dest_port = unpack("!HH", self.header_bytes[:4])
+        self.SEQ = unpack("!I", self.header_bytes[4:8])[0]
+        self.ACK = unpack("!I", self.header_bytes[8:12])[0]
+
+        data_offReserveNS = unpack("!B", self.header_bytes[12:13])[0]
+        self.data_offset = data_offReserveNS >> 4
+        self.NS_flag = data_offReserveNS & 0x1
+
+        flags, self.window_size = unpack("!BH", self.header_bytes[13:16])
+
+        self.CWR_flag = flags & 0b10000000
+        self.ECE_flag = flags & 0b01000000
+        self.URG_flag = flags & 0b00100000
+        self.ACK_flag = flags & 0b00010000
+        self.PSH_flag = flags & 0b00001000
+        self.RST_flag = flags & 0b00000100
+        self.SYN_flag = flags & 0b00000010
+        self.FIN_flag = flags & 0b00000001
+
+        self.checksum, self.urg_pointer = unpack("!HH", self.header_bytes[16:20])
 
         # TODO: You do not need to unpack any options, if they are present in the header. However, if options 
         #       are present, store the bytes associated with them in self.options_bytes.
+        if(self.data_offset > 0x5):
+            self.options_bytes = pkt[header_length:]
 
     def protocol(self):
         return "TCP"
